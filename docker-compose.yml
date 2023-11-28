@@ -1,0 +1,13 @@
+services:
+  erp_backend:
+    container_name: mainstack_be
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:${PORT}
+      - 5432:5432
+    env_file: .env
+    environment:
+      - PORT=${PORT}
