@@ -5,10 +5,12 @@ import { MongoId } from "../../interfaces/types";
 const ProductSchema = new Schema<IProduct>({
     name: { type: String, index: true, trim: true, required: true, unique: true},
     price: { type: Number, min: 0, required: true},
+    cost: { type: Number, min: 0, required: true},
     code: { type: String, index: true, required: true, immutable: true},
     tags: { type: [String]},
     description: { type: String},
-    discounts: [{ type: Schema.Types.ObjectId, ref: "discount"}], //max of 5 active discounts
+    product_url: { type: String, required: true}, //"https://www.mainstack.co/producst/productId"
+    discounts: { type: Schema.Types.ObjectId, ref: "discount"},
     images: [{ type: Schema.Types.ObjectId, ref: "product_photo"}], //max of 5 active photos
     categories: [{ type: Schema.Types.ObjectId, ref: "product_category"}], // max of 10 active categories
     available_quantity: {type: Number, default: 0, min: 0},
@@ -27,9 +29,11 @@ const ProductSchema = new Schema<IProduct>({
 export interface IProduct {
     name: string,
     price: number,
+    cost: number,
     code: string,
     tags: string[],
     description: string,
+    product_url: string,
     discounts: MongoId[],
     images: MongoId[],
     categories: MongoId[],
