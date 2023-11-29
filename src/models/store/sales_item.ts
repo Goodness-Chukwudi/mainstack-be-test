@@ -6,7 +6,7 @@ export const ItemDiscountSchema = new Schema({
     amount: {type: Number, min: 0, required: true}
 })
 
-const SalesItemsSchema = new Schema<ISalesItems>({
+const SalesItemSchema = new Schema<ISalesItem>({
     product: { type: Schema.Types.ObjectId, ref: "product"},
     sales_invoice: { type: Schema.Types.ObjectId, ref: "sales_invoice", required: true},
     quantity: { type: Number, min: 0, required: true},
@@ -16,13 +16,14 @@ const SalesItemsSchema = new Schema<ISalesItems>({
     total_price: { type: Number, min: 0, required: true},
     profit: { type: Number, min: 0, required: true},
     discount: {type: ItemDiscountSchema},
+    code: { type: String, index: true, required: true, immutable: true, unique: true},
     created_by: { type: Schema.Types.ObjectId, ref: "user"}
 },
 {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
-export interface ISalesItems {
+export interface ISalesItem {
     product: MongoId,
     sales_invoice: MongoId,
     quantity: number,
@@ -32,10 +33,11 @@ export interface ISalesItems {
     total_price: number,
     profit: number,
     discount: typeof ItemDiscountSchema,
+    code: string,
     created_by: MongoId
     
     _id: MongoId
 }
 
-const SalesItems = model<ISalesItems>("sales_item", SalesItemsSchema);
-export default SalesItems;
+const SalesItem = model<ISalesItem>("sales_item", SalesItemSchema);
+export default SalesItem;

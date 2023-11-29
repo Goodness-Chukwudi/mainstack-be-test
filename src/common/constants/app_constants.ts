@@ -140,3 +140,9 @@ export const DISCOUNT_TYPES = Object.freeze({
     PERCENTAGE: "percentage",
     FIXED: "fixed"
 });
+
+export const INVOICE_STATUS = Object.freeze({
+    PAID: "paid",
+    PENDING: "pending",
+    RETURNED: "returned"
+});

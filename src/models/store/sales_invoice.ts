@@ -1,6 +1,7 @@
-import { Model, Schema, model} from "mongoose";
+import { Schema, model} from "mongoose";
 import { MongoId } from "../../interfaces/types";
-import { ItemDiscountSchema } from "./sales_items";
+import { ItemDiscountSchema } from "./sales_item";
+import { INVOICE_STATUS } from "../../common/constants/app_constants";
 
 const SalesDiscountSchema = new Schema({
     discounts: {type: [ItemDiscountSchema], required: true},
@@ -20,6 +21,8 @@ const SalesInvoiceSchema = new Schema<ISalesInvoice>({
     total_amount: { type: Number, min: 0, required: true},
     discount: {type: SalesDiscountSchema},
     profit: { type: Number, min: 0, required: true},
+    uuid: { type: String, required: true, immutable: true, unique: true},
+    status: { type: String, default: INVOICE_STATUS.PENDING, enum: Object.values(INVOICE_STATUS)},
     created_by: { type: Schema.Types.ObjectId, ref: "user"}
 }, 
 {
@@ -34,7 +37,9 @@ export interface ISalesInvoice {
     total_amount: number,
     discount: typeof SalesDiscountSchema,
     profit: number,
-    created_by: MongoId
+    uuid: string,
+    status: string,
+    created_by: MongoId,
     
     _id: MongoId
 }

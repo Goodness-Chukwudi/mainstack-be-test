@@ -4,6 +4,7 @@ import { MongoId } from "../../interfaces/types";
 
 const ProductCategorySchema = new Schema<IProductCategory>({
     name: { type: String, required: true, unique: true},
+    code: { type: String, index: true, required: true, immutable: true, unique: true},
     description: { type: String},
     status: { type: String, default: ITEM_STATUS.ACTIVE, enum: Object.values(ITEM_STATUS) },
     created_by: { type: Schema.Types.ObjectId, ref: "user"}
@@ -14,6 +15,7 @@ const ProductCategorySchema = new Schema<IProductCategory>({
 
 export interface IProductCategory {
     name: string,
+    code: string,
     description: string,
     status: string,
     created_by: MongoId,

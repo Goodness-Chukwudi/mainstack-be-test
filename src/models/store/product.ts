@@ -6,7 +6,7 @@ const ProductSchema = new Schema<IProduct>({
     name: { type: String, index: true, trim: true, required: true, unique: true},
     price: { type: Number, min: 0, required: true},
     cost: { type: Number, min: 0, required: true},
-    code: { type: String, index: true, required: true, immutable: true},
+    code: { type: String, index: true, required: true, immutable: true, unique: true},
     tags: { type: [String]},
     description: { type: String},
     product_url: { type: String, required: true}, //"https://www.mainstack.co/producst/productId"
