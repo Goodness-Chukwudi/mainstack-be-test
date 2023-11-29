@@ -4,6 +4,7 @@ import UserPrivilegeMiddleware from "../middlewares/UserPrivilegeMiddleware";
 import Env from "../common/configs/environment_config";
 import AdminUserController from "../controllers/admin/AdminUserController";
 import AdminProductController from "../controllers/admin/AdminProductController";
+import AdminInventoryController from "../controllers/admin/AdminInventoryController";
 
 
 class AdminRoutes {
@@ -20,6 +21,7 @@ class AdminRoutes {
         
         this.app.use(Env.API_PATH + ADMIN_PATH + "/users", AdminUserController);
         this.app.use(Env.API_PATH + ADMIN_PATH + "/products", AdminProductController);
+        this.app.use(Env.API_PATH + ADMIN_PATH + "/inventory", AdminInventoryController);
     }
 }
 

@@ -19,7 +19,7 @@ const ProductSchema = new Schema<IProduct>({
     is_expired: {type: Boolean, default: false},
     expiry_date: {type: Date},
     status: { type: String, default: PRODUCT_STATUS.ACTIVE, enum: Object.values(PRODUCT_STATUS) },
-    created_by: { type: Schema.Types.ObjectId, ref: "user"},
+    created_by: { type: Schema.Types.ObjectId, ref: "user", required: true},
     updated_by: { type: Schema.Types.ObjectId, ref: "user"},
     deleted_by: { type: Schema.Types.ObjectId, ref: "user"},
 }, 

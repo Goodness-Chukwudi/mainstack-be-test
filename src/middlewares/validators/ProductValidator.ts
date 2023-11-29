@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response, Router } from "express";
 import Joi from "joi";
-import { date } from "../../common/utils/JoiExtensions";
+import { date, objectId } from "../../common/utils/JoiExtensions";
 import BaseRouterMiddleware from "../BaseRouterMiddleware";
 import { JoiValidatorOptions } from "../../common/configs/app_config";
 import ProductService from "../../services/store/ProductService";
-import { CATEGORIES, PRODUCT_STATUS } from "../../common/constants/app_constants";
+import { CATEGORIES, DISCOUNT_TYPES, ITEM_STATUS, PRODUCT_STATUS } from "../../common/constants/app_constants";
 
 const JoiDate = Joi.extend(date);
+const JoiId = Joi.extend(objectId);
 
 class ProductValidator extends BaseRouterMiddleware {
 
@@ -74,6 +75,23 @@ class ProductValidator extends BaseRouterMiddleware {
                 const error = new Error("A product with this name already exist");
                 return this.sendErrorResponse(res, error, this.errorResponseMessage.duplicateValue("Product name"), 400);
             }
+
+            next();
+        } catch (error: any) {
+            return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
+        }
+    };
+
+    validateDiscount = async ( req: Request, res: Response, next: NextFunction ) => {
+
+        try {
+            const BodySchema = Joi.object({
+                type: Joi.string().valid(...Object.values(DISCOUNT_TYPES)).required(),
+                amount: Joi.number().min(0).required(),
+                description: Joi.string().max(250).required()
+            });
+            
+            await BodySchema.validateAsync(req.body, JoiValidatorOptions);
 
             next();
         } catch (error: any) {

@@ -11,7 +11,7 @@ const StockEntrySchema = new Schema<IStockEntry>({
     expected_profit: { type: Number, min: 0, required: true},
     description: { type: String},
     product: { type: Schema.Types.ObjectId, ref: "product"},
-    created_by: { type: Schema.Types.ObjectId, ref: "user"}
+    created_by: { type: Schema.Types.ObjectId, ref: "user", required: true}
 }, 
 {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
