@@ -14,7 +14,7 @@ const ItemSchema = new Schema({
     name: {type: String, required: true}
 })
 
-const SalesInvoiceSchema = new Schema<ISalesInvoice>({
+const SalesSchema = new Schema<ISales>({
     customer: { type: String, required: true, trim: true, index: true},
     items: {type: [ItemSchema], required: true},
     amount: { type: Number, min: 0, required: true},
@@ -40,7 +40,7 @@ const SalesInvoiceSchema = new Schema<ISalesInvoice>({
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 });
 
-export interface ISalesInvoice {
+export interface ISales {
     customer: string,
     items: typeof ItemSchema[],
     amount: number,
@@ -63,7 +63,7 @@ export interface ISalesInvoice {
     _id: MongoId
 }
 
-SalesInvoiceSchema.pre('save', function() {
+SalesSchema.pre('save', function() {
     return new Promise((resolve) => {
         const dateUtils = new DateUtils();
         if (this.isNew) {
@@ -73,5 +73,5 @@ SalesInvoiceSchema.pre('save', function() {
     });
 })
 
-const SalesInvoice = model<ISalesInvoice>("sales_invoice", SalesInvoiceSchema);
-export default SalesInvoice;
+const Sales = model<ISales>("sales", SalesSchema);
+export default Sales;

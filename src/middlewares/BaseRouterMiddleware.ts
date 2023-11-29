@@ -51,6 +51,7 @@ abstract class BaseRouterMiddleware extends BaseResponseHandler {
                 size: Joi.number().min(0),
                 page: Joi.number().min(0),
                 sort: Joi.boolean(),
+                user_id: JoiId.string().objectId(),
                 id: JoiId.string().objectId(),
                 ids: Joi.array().items(JoiId.string().objectId()).min(1),
                 startDate: JoiDate.date().format("YYYY-MM-DD"),
@@ -78,8 +79,7 @@ abstract class BaseRouterMiddleware extends BaseResponseHandler {
     validateDefaultParams = async ( req: Request, res: Response, next: NextFunction ) => {
         try {
             const ParamSchema = Joi.object({
-                id: JoiId.string().objectId().required(),
-                user_id: JoiId.string().objectId().required()
+                id: JoiId.string().objectId().required()
             });
             
             await ParamSchema.validateAsync(req.params, JoiValidatorOptions);

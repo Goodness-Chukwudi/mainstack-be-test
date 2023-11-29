@@ -148,3 +148,14 @@ export const INVOICE_STATUS = Object.freeze({
     PENDING: "pending",
     RETURNED: "returned"
 });
+
+export const CATEGORIES = Object.freeze({
+    TOILETRIES: "toiletries",
+    KIDS: "kids",
+    ADULTS: "adults",
+    MEN: "men",
+    WOMEN: "women",
+    DEVICES: "devices",
+    MUSIC: "music",
+    DRINKS: "drinks"
+});

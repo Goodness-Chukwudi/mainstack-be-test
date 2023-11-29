@@ -1,18 +1,19 @@
 import { Schema, model} from "mongoose";
-import { PRODUCT_STATUS } from "../../common/constants/app_constants";
+import { CATEGORIES, PRODUCT_STATUS } from "../../common/constants/app_constants";
 import { MongoId } from "../../interfaces/types";
+import mongoosePagination from "mongoose-paginate-v2";
+
 
 const ProductSchema = new Schema<IProduct>({
     name: { type: String, index: true, trim: true, required: true, unique: true},
     price: { type: Number, min: 0, required: true},
     cost: { type: Number, min: 0, required: true},
     code: { type: String, index: true, required: true, immutable: true, unique: true},
-    tags: { type: [String]},
+    tags: { type: [String], default: []},
     description: { type: String},
-    product_url: { type: String, required: true}, //"https://www.mainstack.co/producst/code"
-    discounts: { type: Schema.Types.ObjectId, ref: "discount"},
-    images: [{ type: Schema.Types.ObjectId, ref: "product_photo"}], //max of 5 active photos
-    categories: [{ type: Schema.Types.ObjectId, ref: "product_category"}], // max of 10 active categories
+    product_url: { type: String, required: true},
+    images: [{ type: Schema.Types.ObjectId, ref: "product_photo"}],
+    categories: {type: [String], default: [], enum: Object.values(CATEGORIES)},
     available_quantity: {type: Number, required: true, min: 0},
     is_out_of_stock: {type: Boolean, default: false},
     is_expired: {type: Boolean, default: false},
@@ -34,9 +35,8 @@ export interface IProduct {
     tags: string[],
     description: string,
     product_url: string,
-    discounts: MongoId[],
     images: MongoId[],
-    categories: MongoId[],
+    categories: string[],
     available_quantity: number,
     is_out_of_stock: boolean,
     is_expired: boolean,
@@ -49,5 +49,6 @@ export interface IProduct {
     _id: MongoId
 }
 
+ProductSchema.plugin(mongoosePagination);
 const Product = model<IProduct>("product", ProductSchema);
 export default Product;

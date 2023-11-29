@@ -18,7 +18,6 @@ export class UploadMiddleware extends BaseRouterMiddleware {
     }
 
     public uploadPhoto = async (req: Request, res: Response, next: NextFunction) => {
-        console.time("HERE");
         try {
             //@ts-ignore
             let file: any = req.files?.photo;  
@@ -28,7 +27,7 @@ export class UploadMiddleware extends BaseRouterMiddleware {
             }
     
             file = await this.appUtils.resizeImage(file, 1000, 100);
-            let fileName = req.body.name + "_" + Date.now();
+            let fileName = req.params.id + "_" + Date.now();
             const photo = await this.appUtils.uploadFile(file.tempFilePath, fileName);
             
             const resizedFile = await this.appUtils.resizeImage(file, 250, 80);
@@ -44,7 +43,7 @@ export class UploadMiddleware extends BaseRouterMiddleware {
                 public_id: photo.public_id
             }
             this.requestService.addDataToState(UPLOADED_FILE, uploadedPhoto);
-console.timeEnd("HERE")
+
             next();
         } catch (error: any) {
             return this.sendErrorResponse(res, error, this.errorResponseMessage.FILE_UPLOAD_ERROR, 500);

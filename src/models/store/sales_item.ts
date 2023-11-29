@@ -8,7 +8,7 @@ export const ItemDiscountSchema = new Schema({
 
 const SalesItemSchema = new Schema<ISalesItem>({
     product: { type: Schema.Types.ObjectId, ref: "product"},
-    sales_invoice: { type: Schema.Types.ObjectId, ref: "sales_invoice", required: true},
+    sales_invoice: { type: Schema.Types.ObjectId, ref: "sales", required: true},
     quantity: { type: Number, min: 0, required: true},
     unit_cost: { type: Number, min: 0, required: true},
     total_cost: { type: Number, min: 0, required: true},
