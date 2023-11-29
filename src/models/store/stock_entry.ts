@@ -1,6 +1,6 @@
 import { Schema, model} from "mongoose";
-import { ITEM_STATUS } from "../../common/constants/app_constants";
 import { MongoId } from "../../interfaces/types";
+import mongoosePagination from "mongoose-paginate-v2";
 
 //tracks restocking of products in the store
 const StockEntrySchema = new Schema<IStockEntry>({
@@ -10,7 +10,7 @@ const StockEntrySchema = new Schema<IStockEntry>({
     selling_price: { type: Number, min: 0, required: true},
     expected_profit: { type: Number, min: 0, required: true},
     description: { type: String},
-    product: { type: Schema.Types.ObjectId, ref: "product"},
+    product: { type: Schema.Types.ObjectId, ref: "product", required: true},
     created_by: { type: Schema.Types.ObjectId, ref: "user", required: true}
 }, 
 {
@@ -30,5 +30,6 @@ export interface IStockEntry {
     _id: MongoId
 }
 
+StockEntrySchema.plugin(mongoosePagination);
 const StockEntry = model<IStockEntry>("stock_entry", StockEntrySchema);
 export default StockEntry;

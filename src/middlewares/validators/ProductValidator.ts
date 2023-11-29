@@ -98,6 +98,42 @@ class ProductValidator extends BaseRouterMiddleware {
             return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
         }
     };
+
+    validateStockEntry = async ( req: Request, res: Response, next: NextFunction ) => {
+
+        try {
+            const BodySchema = Joi.object({
+                quantity: Joi.number().min(1).required(),
+                unit_cost: Joi.number().min(0).required(),
+                selling_price: Joi.number().min(0).required(),
+                description: Joi.string().max(250),
+                product: JoiId.string().objectId().required()
+            });
+            
+            await BodySchema.validateAsync(req.body, JoiValidatorOptions);
+
+            next();
+        } catch (error: any) {
+            return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
+        }
+    };
+
+    validateStockRemoval = async ( req: Request, res: Response, next: NextFunction ) => {
+
+        try {
+            const BodySchema = Joi.object({
+                quantity: Joi.number().min(1).required(),
+                reason: Joi.string().max(250).required(),
+                product: JoiId.string().objectId().required()
+            });
+            
+            await BodySchema.validateAsync(req.body, JoiValidatorOptions);
+
+            next();
+        } catch (error: any) {
+            return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
+        }
+    };
 }
 
 export default ProductValidator;

@@ -1,4 +1,4 @@
-import { ITEM_STATUS, PRODUCT_URL, UPLOADED_FILE } from "../../common/constants/app_constants";
+import { PRODUCT_URL, UPLOADED_FILE } from "../../common/constants/app_constants";
 import DateUtils from "../../common/utils/DateUtils";
 import UploadMiddleware from "../../middlewares/UploadMiddleware";
 import ProductValidator from "../../middlewares/validators/ProductValidator";
@@ -81,7 +81,7 @@ class AdminProductController extends BaseApiController {
                     total_cost: body.cost * body.available_quantity,
                     unit_cost: body.cost,
                     selling_price: body.price,
-                    expected_profit: (body.price * body.available_quantity) - body.cost * body.available_quantity,
+                    expected_profit: (body.price * body.available_quantity) - (body.cost * body.available_quantity),
                     description: "Initial stock entry",
                     product: product._id,
                     created_by: user._id

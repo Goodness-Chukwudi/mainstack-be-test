@@ -101,13 +101,14 @@ abstract class DBService<T> {
      * @param session An optional mongoose client session, required if the operation is in a transaction
      * @returns  A promise resolving to a a list of documents that match filter
     */
-    public find(query = {}, selectedFields:string[] = [], sort:any = null, session: ClientSession|null = null): Promise< HydratedDocument<T>[] > {
+    public find(query = {}, limit = 100, sort:any = null, selectedFields:string[] = [], session: ClientSession|null = null): Promise< HydratedDocument<T>[] > {
         //@ts-ignore
         const finalQuery = query.status ? query : Object.assign(query, {status: {$ne: ITEM_STATUS.DELETED}});
         return new Promise((resolve, reject) => {
             this.Model.find(finalQuery)
                 .session(session)
                 .sort(sort || {created_at: -1})
+                .limit(limit)
                 .select(selectedFields)
                 .then((data) => {
                     resolve(data);
