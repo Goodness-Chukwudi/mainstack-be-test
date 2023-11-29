@@ -129,26 +129,9 @@ class AdminUserController extends BaseApiController {
     listUserPrivileges(path:string) {
         this.router.get(path, async (req, res) => {
             try {
-                const reqQuery: Record<string, any> = req.query;
-                let query:Record<string, any> = {};
-    
-                if (reqQuery.startDate && reqQuery.endDate) {
-                    const startDate = this.dateUtils.startOfDay(reqQuery.startDate)
-                    const endDate = this.dateUtils.endOfDay(reqQuery.endDate)
-                    query = {...query, created_at: { $gte: startDate, $lte: endDate }}
-                }
-                if (reqQuery.status) query = {...query, status: reqQuery.status};
-                if (reqQuery.gender) query = {...query, gender: reqQuery.gender};
-    
-                if (reqQuery.search) query = {...query, $or: [
-                    {first_name: new RegExp(reqQuery.search, "i")},
-                    {middle_name: new RegExp(reqQuery.search, "i")},
-                    {last_name: new RegExp(reqQuery.search, "i")}
-                ]};
-
                 const selectedFields = ["user", "role", "status"];
                 const populatedFields = [{ path: "user", select: "first_name middle_name last_name" }];
-                const userPrivileges = await this.userPrivilegeService.paginateAndPopulate(query, req.query.size, req.query.page, req.query.sort, selectedFields, populatedFields);
+                const userPrivileges = await this.userPrivilegeService.paginateAndPopulate({}, req.query.size, req.query.page, req.query.sort, selectedFields, populatedFields);
                 
                 return this.sendSuccessResponse(res, userPrivileges);
             } catch (error:any) {

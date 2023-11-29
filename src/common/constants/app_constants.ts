@@ -127,3 +127,16 @@ export const ENVIRONMENTS = Object.freeze({
     UAT: "user acceptance testing",
     STAGING: "staging"
 });
+
+export const PRODUCT_STATUS = Object.freeze({
+    ACTIVE: "active",
+    DEACTIVATED: "deactivated",
+    SUSPENDED: "suspended",
+    BANNED: "banned",
+    DELETED: "deleted"
+});
+
+export const DISCOUNT_TYPES = Object.freeze({
+    PERCENTAGE: "percentage",
+    FIXED: "fixed"
+});
