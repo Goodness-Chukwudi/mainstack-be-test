@@ -155,7 +155,7 @@ class ErrorResponseMessage {
         message: "The size of this file is larger than the accepted limit",
     };
 
-    public readonly UPLOAD_ERROR = {
+    public readonly FILE_UPLOAD_ERROR = {
         response_code: 29,
         message: "Error uploading file. Please try again",
     };

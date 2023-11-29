@@ -9,11 +9,11 @@ const ProductSchema = new Schema<IProduct>({
     code: { type: String, index: true, required: true, immutable: true, unique: true},
     tags: { type: [String]},
     description: { type: String},
-    product_url: { type: String, required: true}, //"https://www.mainstack.co/producst/productId"
+    product_url: { type: String, required: true}, //"https://www.mainstack.co/producst/code"
     discounts: { type: Schema.Types.ObjectId, ref: "discount"},
     images: [{ type: Schema.Types.ObjectId, ref: "product_photo"}], //max of 5 active photos
     categories: [{ type: Schema.Types.ObjectId, ref: "product_category"}], // max of 10 active categories
-    available_quantity: {type: Number, default: 0, min: 0},
+    available_quantity: {type: Number, required: true, min: 0},
     is_out_of_stock: {type: Boolean, default: false},
     is_expired: {type: Boolean, default: false},
     expiry_date: {type: Date},

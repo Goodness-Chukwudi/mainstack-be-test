@@ -1,6 +1,6 @@
-import BaseRouterMiddleware from "./BaseRouterMiddleware";
+import BaseRouterMiddleware from "../BaseRouterMiddleware";
 import { NextFunction, Request, Response, Router } from "express";
-import LoginSessionService from "../services/LoginSessionService";
+import LoginSessionService from "../../services/LoginSessionService";
 
 
 export class UtilityValidator extends BaseRouterMiddleware {

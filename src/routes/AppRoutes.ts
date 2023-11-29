@@ -9,10 +9,6 @@ class AppRoutes {
     }
 
     initializeRoutes() {
-
-        const TEAM_URL = "/teams";
-        // const masterRestrictionPrivilegeMiddleware = new UserPrivilegeMiddleware(this.app, []);
-        // this.app.use(Env.API_PATH + TEAM_URL, masterRestrictionPrivilegeMiddleware.validatePrivileges);
         
         this.app.use(Env.API_PATH + "/", UserController);
     }

@@ -10,6 +10,8 @@ import { json2csv, csv2json } from 'json-2-csv';
 import { Readable } from 'stream';
 import { ENVIRONMENTS } from '../constants/app_constants';
 import Env from '../configs/environment_config';
+import {UploadApiResponse, v2 as cloudinary} from 'cloudinary';
+import Jimp from "jimp";
 
 class AppUtils extends BaseResponseHandler {
 
@@ -213,6 +215,52 @@ class AppUtils extends BaseResponseHandler {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * Uploads a file to cloudinary
+
+     * @param filePath file path of the file to be uploaded
+     * @param publicId name you want to give the file
+     * @returns  an object of type UploadApiResponse
+    */
+    uploadFile(filePath: string, publicId: string): Promise<UploadApiResponse> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                cloudinary.config(Env.CLOUDINARY_CONFIG);
+                
+                
+                const result = await cloudinary.uploader.upload(filePath, { public_id: publicId });
+
+                resolve(result);
+            } catch (error:any) {
+                reject(error);
+            }
+        })
+    }
+
+    /**
+     * Resizes the dimensions of an image using the specified width
+
+     * @param file metadata of the file to be resized
+     * @param width desired width
+     * @param quality the desired percentage of quality reduction. Defaults to 50
+     * @returns  the modified file metadata
+    */
+    resizeImage = (file: any, width: number, quality = 50): Promise<any> => {
+
+        return new Promise((resolve, reject) => {
+
+            Jimp.read(file.tempFilePath, (error, result) => {
+                if (error) reject(error);
+
+                result
+                .resize(width, Jimp.AUTO)
+                .quality(quality)
+                .write(file.tempFilePath);
+                resolve(file)
+              });
+        })
     }
 
     /**

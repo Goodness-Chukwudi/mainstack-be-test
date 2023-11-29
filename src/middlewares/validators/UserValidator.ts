@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import Joi from "joi";
-import { date, objectId } from "../../common/utils/JoiExtensions";
+import { objectId } from "../../common/utils/JoiExtensions";
 import BaseRouterMiddleware from "../BaseRouterMiddleware";
 import { JoiValidatorOptions } from "../../common/configs/app_config";
 import { GENDER, ITEM_STATUS, USER_ROLES } from "../../common/constants/app_constants";

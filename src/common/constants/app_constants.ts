@@ -6,6 +6,8 @@ export const USER_PRIVILEGE_LABEL = "user_privilege";
 export const USER_PASSWORD_LABEL = "user_password";
 export const LOGIN_SESSION_LABEL = "login_session";
 export const OTP_VALIDITY_PERIOD = 5;
+export const UPLOADED_FILE = "uploaded_file";
+export const PRODUCT_URL = "https://www.mainstack.co/producst/";
 
 export const USER_STATUS = Object.freeze({
     IN_REVIEW: "in review",
@@ -97,7 +99,7 @@ export const PAYMENT_METHOD = Object.freeze({
 });
 
 export const SEQUENCE_COUNTER_TYPES = Object.freeze({
-    
+    PRODUCT_CODE: "product"
 });
 
 export const OTP_TYPES = Object.freeze({

@@ -4,9 +4,10 @@ import BaseResponseHandler from "../controllers/base controllers/BaseResponseHan
 import { NextFunction, Request, Response, Router } from "express";
 import Joi from "joi";
 import { JoiValidatorOptions } from "../common/configs/app_config";
-import { objectId } from "../common/utils/JoiExtensions";
+import { date, objectId } from "../common/utils/JoiExtensions";
 
 const JoiId = Joi.extend(objectId);
+const JoiDate = Joi.extend(date);
 
 /**
  * An abstract class that provides a base middleware for all routers.
@@ -51,7 +52,9 @@ abstract class BaseRouterMiddleware extends BaseResponseHandler {
                 page: Joi.number().min(0),
                 sort: Joi.boolean(),
                 id: JoiId.string().objectId(),
-                ids: Joi.array().items(JoiId.string().objectId()).min(1)
+                ids: Joi.array().items(JoiId.string().objectId()).min(1),
+                startDate: JoiDate.date().format("YYYY-MM-DD"),
+                endDate: JoiDate.date().format("YYYY-MM-DD")
             });
             const ParamSchema = Joi.object({
                 id: JoiId.string().objectId(),

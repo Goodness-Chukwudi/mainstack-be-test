@@ -8,7 +8,7 @@ import AuthController from "./controllers/AuthController";
 import AuthMiddleware from "./middlewares/AuthMiddleware";
 import fileUpload from "express-fileupload";
 import Env from "./common/configs/environment_config";
-import UtilityValidator from "./middlewares/UtilityValidator";
+import UtilityValidator from "./middlewares/validators/UtilityValidator";
 
 class App {
 

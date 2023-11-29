@@ -1,5 +1,10 @@
 import 'dotenv/config'
 
+interface ICLOUDINARY_CONFIG { 
+    cloud_name: string, 
+    api_key:  string, 
+    api_secret: string 
+}
 interface IEnv {
     ENVIRONMENT: string,
     PORT: number,
@@ -15,7 +20,10 @@ interface IEnv {
     SUPER_ADMIN_LAST_NAME: string,
     SUPER_ADMIN_EMAIL: string,
     SUPER_ADMIN_PHONE: string,
-    SUPER_ADMIN_GENDER: string
+    SUPER_ADMIN_GENDER: string,
+
+    CLOUDINARY_CONFIG: ICLOUDINARY_CONFIG
+
 }
 
 
@@ -35,6 +43,12 @@ const Env: IEnv = {
     SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
     SUPER_ADMIN_PHONE: process.env.SUPER_ADMIN_PHONE as string,
     SUPER_ADMIN_GENDER: process.env.SUPER_ADMIN_GENDER as string,
+
+    CLOUDINARY_CONFIG: { 
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string, 
+        api_key: process.env.CLOUDINARY_API_KEY as string, 
+        api_secret: process.env.CLOUDINARY_API_SECRET as string 
+    }
 }
 
 export default Env;
