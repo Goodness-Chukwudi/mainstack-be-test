@@ -62,6 +62,7 @@
     "mongoose": "^6.4.4",
     "mongoose-paginate-v2": "^1.6.3",
     "path": "^0.12.7",
+    "pm2": "^5.3.0",
     "randomstring": "^1.2.2",
     "uuid": "^8.3.2",
     "winston": "^3.8.1",
