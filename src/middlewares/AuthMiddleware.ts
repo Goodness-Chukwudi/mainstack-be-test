@@ -6,8 +6,6 @@ import { BIT, LOGIN_SESSION_LABEL } from "../common/constants/app_constants";
 import LoginSessionService from "../services/LoginSessionService";
 import { TokenExpiredError } from "jsonwebtoken";
 import Env from "../common/configs/environment_config";
-import LoginSession, { ILoginSession } from "../models/login_session";
-import { Model } from "mongoose";
 
 export class AuthMiddleware extends BaseRouterMiddleware {
 
