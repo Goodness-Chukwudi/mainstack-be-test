@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { PRODUCT_URL, UPLOADED_FILE } from "../../common/constants/app_constants";
 import DateUtils from "../../common/utils/DateUtils";
 import UploadMiddleware from "../../middlewares/UploadMiddleware";
@@ -43,14 +44,14 @@ class AdminProductController extends BaseApiController {
     }
 
     protected initializeRoutes() {
-        this.createNewProduct("/"); //post
-        this.listProducts("/"); //get
-        this.getProductDetails("/:id/details"); //get
-        this.updateProduct("/:id"); //patch
-        this.uploadProductPhoto("/:id/photo"); //patch
-        this.createDiscount("/:id/discounts"); //post
-        this.toggleDiscountStatus("/discounts/:id/status"); //patch
-        this.listDiscounts("/discounts"); //get
+        this.createNewProduct("/"); //POST
+        this.listProducts("/"); //GET
+        this.getProductDetails("/:id/details"); //GET
+        this.updateProduct("/:id"); //PATCH
+        this.uploadProductPhoto("/:id/photo"); //PATCH
+        this.createDiscount("/:id/discounts"); //POST
+        this.toggleDiscountStatus("/discounts/:id/status"); //PATCH
+        this.listDiscounts("/discounts"); //GET
     }
 
     createNewProduct(path:string) {
@@ -140,12 +141,15 @@ class AdminProductController extends BaseApiController {
                 const id = req.params.id;
                 const user = this.requestService.getLoggedInUser();
                 const body = req.body;
-                const product = await this.productService.findById(id, undefined, session);
+                const discountId = new Types.ObjectId();
+
+                const product = await this.productService.updateById(id, {discount: discountId}, session);
                 if (!product) {
                     const error = new Error("A product with this Id doesn't exist");
                     return this.sendErrorResponse(res, error, this.errorResponseMessage.resourceNotFound("A product with this Id was"), 400, session);
                 }
 
+                //Disable previous discount
                 await this.discountService.updateOne({product: product._id, is_active: true}, {is_active: false}, session);
 
                 const discountData = {
@@ -153,7 +157,8 @@ class AdminProductController extends BaseApiController {
                     amount: body.amount,
                     description: body.description,
                     product: id,
-                    created_by: user._id
+                    created_by: user._id,
+                    _id: discountId
                 }
                 await this.discountService.save(discountData, session);
 
@@ -167,20 +172,27 @@ class AdminProductController extends BaseApiController {
     toggleDiscountStatus(path:string) {
         this.router.patch(path, this.productValidator.validateDefaultParams);
         this.router.patch(path, async (req, res) => {
+            const session = await this.appUtils.createMongooseTransaction();
             try {
                 const id = req.params.id;
-                const discount = await this.discountService.findById(id);
+                let discount = await this.discountService.findById(id, undefined, session);
                 if (!discount) {
                     const error = new Error("A product discount with this Id doesn't exist");
                     return this.sendErrorResponse(res, error, this.errorResponseMessage.resourceNotFound("A product discount with this Id was"), 400);
                 }
 
                 discount.is_active = !discount.is_active;
-                await discount.save();
+                discount = await discount.save({session: session});
 
-                this.sendSuccessResponse(res);
+                if (discount.is_active) {
+                    await this.productService.updateById(discount.product, {discount: discount._id}, session)
+                } else {
+                    await this.productService.updateById(discount.product, {discount: null}, session)
+                }
+
+                this.sendSuccessResponse(res, {}, session);
             } catch (error: any) {
-                this.sendErrorResponse(res, error, this.errorResponseMessage.UNABLE_TO_COMPLETE_REQUEST, 500);
+                this.sendErrorResponse(res, error, this.errorResponseMessage.UNABLE_TO_COMPLETE_REQUEST, 500, session);
             }
         });
     }
@@ -260,10 +272,10 @@ class AdminProductController extends BaseApiController {
         this.router.get(path, this.productValidator.validateDefaultParams);
         this.router.get(path, async (req, res) => {
             try {
-
                 const id = req.params.id;
                 const populatedFields = [
                     { path: "images", select: "url thumbnail_url is_main status" },
+                    { path: "discount", select: "type amount description is_active" },
                     {path: "created_by", select: "first_name middle_name last_name" }
                 ];
 

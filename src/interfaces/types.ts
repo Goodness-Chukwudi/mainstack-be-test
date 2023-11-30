@@ -1,3 +1,5 @@
 import { Model, ObjectId, Types } from "mongoose";
 
-export type MongoId = Types.ObjectId|string|Model<any>
+export type MongoId = typeof Types.ObjectId|string|Model<any>
+
+export type ErrorResponseData = Record<string,any[]> | undefined

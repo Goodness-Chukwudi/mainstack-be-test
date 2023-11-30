@@ -8,7 +8,7 @@ import UserPrivilegeService from "../../services/UserPrivilege.service";
 
 const JoiId = Joi.extend(objectId);
 
-class UserValidator extends BaseRouterMiddleware {
+class AppValidator extends BaseRouterMiddleware {
 
     userPrivilegeService: UserPrivilegeService;
 
@@ -90,6 +90,27 @@ class UserValidator extends BaseRouterMiddleware {
             return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
         }
     };
+
+    validateSales = async ( req: Request, res: Response, next: NextFunction ) => {
+        try {
+            const body = req.body;
+            const BodySchema = Joi.object({
+                customer_name: Joi.string().max(100).required(),
+                items: Joi.array().items(
+                    Joi.object({
+                        product: JoiId.string().objectId().required(),
+                        quantity: Joi.number().integer().min(1).required()
+                    })
+                ).unique("product").min(1).required()
+            });
+            
+            await BodySchema.validateAsync(body, JoiValidatorOptions);
+
+            next();
+        } catch (error: any) {
+            return this.sendErrorResponse(res, error, this.errorResponseMessage.badRequestError(error.message), 400);
+        }
+    };
 }
 
-export default UserValidator;
+export default AppValidator;

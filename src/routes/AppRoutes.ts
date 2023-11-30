@@ -1,6 +1,6 @@
 import {Express} from "express";
 import Env from "../common/configs/environment_config";
-import UserController from "../controllers/UserController";
+import AppController from "../controllers/AppController";
 class AppRoutes {
 
     private app: Express;
@@ -10,7 +10,7 @@ class AppRoutes {
 
     initializeRoutes() {
         
-        this.app.use(Env.API_PATH + "/", UserController);
+        this.app.use(Env.API_PATH + "/", AppController);
     }
 }
 

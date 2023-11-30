@@ -1,18 +1,24 @@
+import { Types } from "mongoose";
 import { BIT, PASSWORD_STATUS, USER_PASSWORD_LABEL, USER_STATUS } from "../common/constants/app_constants";
-import UserValidator from "../middlewares/validators/UserValidator";
+import AppValidator from "../middlewares/validators/AppValidator";
 import LoginSessionService from "../services/LoginSessionService";
 import PasswordService from "../services/PasswordService";
 import UserService from "../services/UserService";
+import SalesItemService from "../services/store/SalesItemService";
+import SalesService from "../services/store/SalesService";
 import BaseApiController from "./base controllers/BaseApiController";
+import { SalesItemData } from "../interfaces/interfaces";
 
 
 
-class UserController extends BaseApiController {
+class AppController extends BaseApiController {
 
     userService: UserService;
     loginSessionService: LoginSessionService;
     passwordService: PasswordService;
-    userValidator: UserValidator;
+    appValidator: AppValidator;
+    salesService: SalesService;
+    salesItemService: SalesItemService;
 
     constructor() {
         super();
@@ -22,16 +28,19 @@ class UserController extends BaseApiController {
         this.userService = new UserService();
         this.loginSessionService = new LoginSessionService();
         this.passwordService = new PasswordService();
+        this.salesService = new SalesService();
+        this.salesItemService = new SalesItemService();
     }
     
     protected initializeMiddleware() {
-        this.userValidator = new UserValidator(this.router);
+        this.appValidator = new AppValidator(this.router);
     }
 
     protected initializeRoutes() {
-        this.me("/me"); //get
-        this.logout("/logout"); //patch
-        this.updatePassword("/password"); //patch
+        this.me("/me"); //GET
+        this.logout("/logout"); //PATCH
+        this.updatePassword("/password"); //PATCH
+        this.makeSales("/sales"); //POST
     }
 
     me(path:string) {
@@ -67,7 +76,7 @@ class UserController extends BaseApiController {
 
     updatePassword(path:string) {
         this.router.patch(path,
-            this.userValidator.validatePasswordUpdate,
+            this.appValidator.validatePasswordUpdate,
             this.userMiddleWare.validatePassword,
             this.userMiddleWare.hashNewPassword
         );
@@ -118,7 +127,52 @@ class UserController extends BaseApiController {
             }
         });
     }
+
+
+    makeSales(path:string) {
+        this.router.post(path, this.appValidator.validateSales);
+        this.router.post(path, async (req, res) => {
+            const session = await this.appUtils.createMongooseTransaction();
+            try {
+                const user = this.requestService.getLoggedInUser();
+                const body = req.body;
+
+                //Fetch the products from db
+                const {error, data} = await this.salesService.fetchSalesItemsProducts(body.items, session);
+
+                if(error) {
+                    const err  = new Error("There's an error with the selected products");
+                    this.sendErrorResponse(res, err, this.errorResponseMessage.invalidRequest("Some products are not active or doesn't have enough quantity"), 500, session);
+                }
+
+                const salesId= new Types.ObjectId();
+                const salesItemDataList: SalesItemData[] = [];
+                data.forEach(item => {
+                    const salesItemsData = {
+                        product_id: item.product,
+                        product_name: item.name,
+                        sales_id: salesId.toString(),
+                        quantity: item.quantity,
+                        unit_cost: item.cost,
+                        price: item.price,
+                        discount: item.discount,
+                        categories: item.categories,
+                        user_id: user._id.toString()
+                    }
+                    salesItemDataList.push(salesItemsData);
+                })
+
+                const salesItems = await this.salesItemService.createSalesItems(salesItemDataList, session);
+                const uuid = this.appUtils.generateUUIDV4();
+                const salesInvoice = await this.salesService.createSales(salesItems, body.customer_name, uuid, session);
+
+                this.sendSuccessResponse(res, {salesInvoice, salesItems}, session, 201);
+            } catch (error: any) {
+                this.sendErrorResponse(res, error, this.errorResponseMessage.UNABLE_TO_COMPLETE_REQUEST, 500, session);
+            }
+        });
+    }
     
 }
 
-export default new UserController().router;
+export default new AppController().router;

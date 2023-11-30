@@ -16,6 +16,7 @@ class AdminRoutes {
 
     initializeRoutes() {
         const ADMIN_PATH = "/admin";
+        //the userPrivilegeMiddleware restricts access to this endpoint to only users with admin or super admin privilege
         const userPrivilegeMiddleware = new UserPrivilegeMiddleware(this.app, [USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN]);
         this.app.use(Env.API_PATH + ADMIN_PATH, userPrivilegeMiddleware.validatePrivileges);
         

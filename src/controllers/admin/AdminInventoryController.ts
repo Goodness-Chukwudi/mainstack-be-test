@@ -46,10 +46,10 @@ class AdminInventoryController extends BaseApiController {
     }
 
     protected initializeRoutes() {
-        this.addStock("/stock_entry"); //post
-        this.listStockEntry("/stock_entry"); //get
-        this.removeStock("/stock_removal"); //post
-        this.listStockRemoval("/stock_removal"); //get
+        this.addStock("/stock_entry"); //POST
+        this.listStockEntry("/stock_entry"); //GET
+        this.removeStock("/stock_removal"); //POST
+        this.listStockRemoval("/stock_removal"); //GET
     }
 
     addStock(path:string) {
@@ -144,7 +144,7 @@ class AdminInventoryController extends BaseApiController {
                     return this.sendErrorResponse(res, error, this.errorResponseMessage.invalidRequest("You cannot remove more that the product's available quantity"), 400);
                 }
 
-                const stockEntries = await this.stockEntryService.find({product: product._id});
+                const stockEntries = await this.stockEntryService.find({product: product._id}, 1);
                 const lastStockEntry = stockEntries[0];
 
                 const stockRemovalData = {

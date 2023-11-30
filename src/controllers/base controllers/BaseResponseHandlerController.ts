@@ -28,18 +28,20 @@ abstract class BaseResponseHandler {
      * @param session An optional mongoose client session, required to abort a running database transaction if any
      * @returns  void
     */
-    protected async sendErrorResponse( res: Response, err: Error, responseMessage: IResponseMessage, statusCode: number, session?: ClientSession) {
+    protected async sendErrorResponse( res: Response, err: Error, responseMessage: IResponseMessage, statusCode: number, session?: ClientSession, data = undefined) {
 
         if(session) await session.abortTransaction();
 
-        let response;
+        const response = {
+            message: responseMessage.message,
+            success: false,
+            error_code: responseMessage.response_code,
+            data: data
+        };
 
         if (err instanceof mongoose.Error.ValidationError) {
-            response = {
-                message: err.message,
-                success: false,
-                error_code: 0
-            };
+            response.message = err.message;
+            response.error_code = 0;
             statusCode = 400;
 
         } else if (this.isDuplicateKeyError(err)) {
@@ -49,22 +51,12 @@ abstract class BaseResponseHandler {
             const duplicateKey = err.message.slice(start + 7, end);
             const field = duplicateKey.slice(0, duplicateKey.lastIndexOf("_"));
 
-            response = {
-                message: "Duplicate value for " + field,
-                success: false,
-                error_code: 1
-            };
+            response.message = "Duplicate value for " + field;
+            response.error_code = 1;
             statusCode = 400;
-            
-        } else {
-            response = {
-                message: responseMessage.message,
-                success: false,
-                error_code: responseMessage.response_code
-            };
-
-            if (statusCode == 500) this.logger.logError(err, res);
         }
+
+        if (statusCode == 500) this.logger.logError(err, res);
 
         res.status(statusCode).json(response);
     }

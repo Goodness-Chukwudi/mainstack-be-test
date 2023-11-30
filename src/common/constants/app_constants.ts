@@ -1,4 +1,5 @@
 export const NAIRA = "₦";
+export const VAT = 7.5;
 export const USER_LABEL = "user";
 export const OTP_LABEL = "otp";
 export const SUPER_ADMIN_LABEL = "super admin";

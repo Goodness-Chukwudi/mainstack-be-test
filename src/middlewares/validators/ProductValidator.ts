@@ -4,7 +4,7 @@ import { date, objectId } from "../../common/utils/JoiExtensions";
 import BaseRouterMiddleware from "../BaseRouterMiddleware";
 import { JoiValidatorOptions } from "../../common/configs/app_config";
 import ProductService from "../../services/store/ProductService";
-import { CATEGORIES, DISCOUNT_TYPES, ITEM_STATUS, PRODUCT_STATUS } from "../../common/constants/app_constants";
+import { CATEGORIES, DISCOUNT_TYPES, PRODUCT_STATUS } from "../../common/constants/app_constants";
 
 const JoiDate = Joi.extend(date);
 const JoiId = Joi.extend(objectId);
@@ -30,7 +30,7 @@ class ProductValidator extends BaseRouterMiddleware {
                 tags: Joi.array().items(Joi.string()).unique(),
                 description: Joi.string().max(250).required(),
                 categories: Joi.array().items(Joi.string().valid(...Object.values(CATEGORIES))).unique().min(1).required(),
-                available_quantity: Joi.number().min(0).required()
+                available_quantity: Joi.number().integer().min(0).required()
             });
             
             await BodySchema.validateAsync(req.body, JoiValidatorOptions);
@@ -103,7 +103,7 @@ class ProductValidator extends BaseRouterMiddleware {
 
         try {
             const BodySchema = Joi.object({
-                quantity: Joi.number().min(1).required(),
+                quantity: Joi.number().integer().min(1).required(),
                 unit_cost: Joi.number().min(0).required(),
                 selling_price: Joi.number().min(0).required(),
                 description: Joi.string().max(250),
@@ -122,7 +122,7 @@ class ProductValidator extends BaseRouterMiddleware {
 
         try {
             const BodySchema = Joi.object({
-                quantity: Joi.number().min(1).required(),
+                quantity: Joi.number().integer().min(1).required(),
                 reason: Joi.string().max(250).required(),
                 product: JoiId.string().objectId().required()
             });

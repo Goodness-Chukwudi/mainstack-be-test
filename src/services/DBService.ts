@@ -353,7 +353,7 @@ abstract class DBService<T> {
      * @param selectedFields An optional array of string, containing fields in the document that are to be selected
      * @returns  A promise resolving to a mongodb document. The ref paths are populated with it's parent documents
     */
-    public updateById(id:string|ObjectId, data:object, session: ClientSession|null = null, selectedFields:string[] = []): Promise<HydratedDocument<T>> {
+    public updateById(id: MongoId, data:object, session: ClientSession|null = null, selectedFields:string[] = []): Promise<HydratedDocument<T>> {
         return new Promise((resolve, reject) => {
             this.Model.findByIdAndUpdate(id, data, {new: true})
             .session(session)

@@ -22,8 +22,8 @@ class AuthController extends BaseApiController {
     }
 
     protected initializeRoutes() {
-        this.login("/login"); //post
-        this.resetPassword("/password"); //post
+        this.login("/login"); //POST
+        this.resetPassword("/password"); //POST
     }
 
     login(path:string) {

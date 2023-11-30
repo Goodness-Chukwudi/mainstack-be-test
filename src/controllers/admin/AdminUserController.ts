@@ -1,5 +1,5 @@
 import DateUtils from "../../common/utils/DateUtils";
-import UserValidator from "../../middlewares/validators/UserValidator";
+import appValidator from "../../middlewares/validators/AppValidator";
 import PasswordService from "../../services/PasswordService";
 import UserPrivilegeService from "../../services/UserPrivilege.service";
 import UserService from "../../services/UserService";
@@ -10,7 +10,7 @@ class AdminUserController extends BaseApiController {
 
     userService: UserService;
     passwordService: PasswordService;
-    userValidator: UserValidator;
+    appValidator: appValidator;
     userPrivilegeService: UserPrivilegeService;
     dateUtils: DateUtils;
 
@@ -26,18 +26,18 @@ class AdminUserController extends BaseApiController {
     }
 
     protected initializeMiddleware() {
-        this.userValidator = new UserValidator(this.router);
+        this.appValidator = new appValidator(this.router);
     }
 
     protected initializeRoutes() {
-        this.createNewUser("/"); //post
-        this.listUsers("/"); //get
-        this.assignUserPrivilege("/privileges"); //post
-        this.listUserPrivileges("/privileges"); //get
+        this.createNewUser("/"); //POST
+        this.listUsers("/"); //GET
+        this.assignUserPrivilege("/privileges"); //POST
+        this.listUserPrivileges("/privileges"); //GET
     }
 
     createNewUser(path:string) {
-        this.router.post(path, this.userValidator.validateUserOnboarding);
+        this.router.post(path, this.appValidator.validateUserOnboarding);
         this.router.post(path, async (req, res) => {
             const session = await this.appUtils.createMongooseTransaction();
             try {
@@ -105,7 +105,7 @@ class AdminUserController extends BaseApiController {
 
     assignUserPrivilege(path:string) {
 
-        this.router.post(path, this.userValidator.validatePrivilegeAssignment);
+        this.router.post(path, this.appValidator.validatePrivilegeAssignment);
         this.router.post(path, async (req, res) => {
             try {
                 const user = this.requestService.getLoggedInUser();

@@ -1,12 +1,13 @@
 import { Schema, model} from "mongoose";
 import { MongoId } from "../../interfaces/types";
 
-export const ItemDiscountSchema = new Schema({
-    discount: {type: Schema.Types.ObjectId, ref: "discount", required: true},
+export const ItemDiscountSchema = {
+    discount_id: {type: Schema.Types.ObjectId, ref: "discount", required: true},
     amount: {type: Number, min: 0, required: true}
-})
+}
 
 const SalesItemSchema = new Schema<ISalesItem>({
+    product_name: { type: String, required: true},
     product: { type: Schema.Types.ObjectId, ref: "product"},
     sales_invoice: { type: Schema.Types.ObjectId, ref: "sales", required: true},
     quantity: { type: Number, min: 0, required: true},
@@ -16,7 +17,7 @@ const SalesItemSchema = new Schema<ISalesItem>({
     total_price: { type: Number, min: 0, required: true},
     profit: { type: Number, min: 0, required: true},
     discount: {type: ItemDiscountSchema},
-    code: { type: String, index: true, required: true, immutable: true, unique: true},
+    categories: {type: [String]},
     created_by: { type: Schema.Types.ObjectId, ref: "user"}
 },
 {
@@ -24,6 +25,7 @@ const SalesItemSchema = new Schema<ISalesItem>({
 });
 
 export interface ISalesItem {
+    product_name: string,
     product: MongoId,
     sales_invoice: MongoId,
     quantity: number,
@@ -33,7 +35,7 @@ export interface ISalesItem {
     total_price: number,
     profit: number,
     discount: typeof ItemDiscountSchema,
-    code: string,
+    categories: string[],
     created_by: MongoId
     
     _id: MongoId
