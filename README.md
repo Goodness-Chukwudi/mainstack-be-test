@@ -15,4 +15,4 @@ To run this application, run npm install to install the specified dependencies a
 ## Usage
 The Dockerized API is hosted on AWS and is available on http://mainstack.us-east-1.elasticbeanstalk.com/api/v1
 
-Please refer to the postman documentation for a complete list of endpoints and their usage.
+Please refer to the postman documentation on https://postman.com/winter-robot-266289/workspace/mainstack-test for a complete list of endpoints and their usage.
