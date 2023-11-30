@@ -87,7 +87,7 @@ class ProductValidator extends BaseRouterMiddleware {
         try {
             const BodySchema = Joi.object({
                 type: Joi.string().valid(...Object.values(DISCOUNT_TYPES)).required(),
-                amount: Joi.number().min(0).required(),
+                amount: Joi.number().min(0).max(100).required(),
                 description: Joi.string().max(250).required()
             });
             

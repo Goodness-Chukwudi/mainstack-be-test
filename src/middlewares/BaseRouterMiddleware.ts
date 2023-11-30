@@ -50,7 +50,7 @@ abstract class BaseRouterMiddleware extends BaseResponseHandler {
 
                 size: Joi.number().min(0),
                 page: Joi.number().min(0),
-                sort: Joi.boolean(),
+                sort: Joi.object(),
                 user_id: JoiId.string().objectId(),
                 id: JoiId.string().objectId(),
                 ids: Joi.array().items(JoiId.string().objectId()).min(1),

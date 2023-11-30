@@ -4,6 +4,7 @@ import mongoose, { ClientSession } from "mongoose";
 import { IResponseMessage } from "../../interfaces/interfaces";
 import ErrorResponseMessage from "../../common/constants/error_response_message";
 import SuccessResponseMessage from "../../common/constants/success_response_message";
+import { ErrorResponseData } from "../../interfaces/types";
 
 abstract class BaseResponseHandler {
 
@@ -28,7 +29,7 @@ abstract class BaseResponseHandler {
      * @param session An optional mongoose client session, required to abort a running database transaction if any
      * @returns  void
     */
-    protected async sendErrorResponse( res: Response, err: Error, responseMessage: IResponseMessage, statusCode: number, session?: ClientSession, data = undefined) {
+    protected async sendErrorResponse( res: Response, err: Error, responseMessage: IResponseMessage, statusCode: number, session?: ClientSession, data:ErrorResponseData = undefined) {
 
         if(session) await session.abortTransaction();
 
@@ -38,23 +39,6 @@ abstract class BaseResponseHandler {
             error_code: responseMessage.response_code,
             data: data
         };
-
-        if (err instanceof mongoose.Error.ValidationError) {
-            response.message = err.message;
-            response.error_code = 0;
-            statusCode = 400;
-
-        } else if (this.isDuplicateKeyError(err)) {
-            //Extract the duplicate field from the error message
-            const start = err.message.indexOf("index: ");
-            const end = err.message.indexOf(" dup key:");
-            const duplicateKey = err.message.slice(start + 7, end);
-            const field = duplicateKey.slice(0, duplicateKey.lastIndexOf("_"));
-
-            response.message = "Duplicate value for " + field;
-            response.error_code = 1;
-            statusCode = 400;
-        }
 
         if (statusCode == 500) this.logger.logError(err, res);
 

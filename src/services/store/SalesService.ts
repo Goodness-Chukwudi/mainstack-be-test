@@ -27,22 +27,26 @@ class SalesService extends DBService<ISales> {
 
                 const errorResponseData:ErrorResponseData = {
                     in_active_products: [],
-                    insufficient_quantity: []
+                    insufficient_quantity: [],
+                    invalid_product_ids: []
                 };
                 let hasError = false;
         
+                const itemValues: Record<string,any> = {};
                 const itemsObject: Record<string,ProcessedItemsObject> = {};
         
                 const productIds: string[] = [];
                 items.forEach(item => {
                     productIds.push(item.product);
                     //@ts-ignore
-                    itemsObject[item.product] = {quantity: item.quantity, product: item.product};
+                    itemValues[item.product] = {quantity: item.quantity, product: item.product};
                 });
         
                 const products = await this.productService.findAndPopulate({_id: {$in: productIds}}, [], [], null, session);
+
                 products.forEach(product => {
-                    const item = itemsObject[product._id.toString()];
+
+                    const item = itemValues[product._id.toString()];
                     if (item) {
                         item.name = product.name;
                         item.price = product.price;
@@ -87,12 +91,17 @@ class SalesService extends DBService<ISales> {
                 let totalDiscounts = 0
                 let profits = 0
                 let totalCost = 0
+                let hasDiscount = false;
         
                 salesItems.forEach(item => {
                     items.push({sales_item: item._id, name: item.product_name});
                     amount += item.total_price;
-                    discounts.push(item.discount.discount_id);
-                    totalDiscounts += item.discount.amount as unknown as number;
+
+                    if (item.discount) {
+                        discounts.push({discount_id: item.discount.discount_id, product_name: item.discount.product_name, amount: item.discount.amount});
+                        totalDiscounts += item.discount.amount as unknown as number;
+                        hasDiscount = true;
+                    }
                     profits += item.profit;
                     totalCost += item.total_cost
                 });
@@ -105,7 +114,7 @@ class SalesService extends DBService<ISales> {
                     amount: amount,
                     vat: vat,
                     total_amount: amount + vat,
-                    discount: {discounts, totalDiscounts},
+                    discount: hasDiscount ? {discounts, total: totalDiscounts} : null,
                     profit: profits,
                     cost: totalCost,
                     uuid: uuid,
@@ -113,7 +122,7 @@ class SalesService extends DBService<ISales> {
                     created_by: salesItems[0].created_by,
                     _id: salesItems[0].sales_invoice
                 }
-        
+
                 const salesInvoice = await this.save(salesInvoiceData, session);
                 resolve(salesInvoice);
             } catch (error) {

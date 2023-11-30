@@ -25,6 +25,7 @@ class SalesItemService extends DBService<ISalesItem> {
                         const discountAmount:number = item.discount.type == DISCOUNT_TYPES.FIXED ? item.discount.amount : (item.discount.amount / 100) * totalPrice;
                         discount = {
                             discount_id: item.discount._id,
+                            product_name: item.product_name,
                             amount: discountAmount
                         }
                         totalPrice += discountAmount;

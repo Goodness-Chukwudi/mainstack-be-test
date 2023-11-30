@@ -142,7 +142,7 @@ class AppController extends BaseApiController {
 
                 if(error) {
                     const err  = new Error("There's an error with the selected products");
-                    this.sendErrorResponse(res, err, this.errorResponseMessage.invalidRequest("Some products are not active or doesn't have enough quantity"), 500, session);
+                    return this.sendErrorResponse(res, err, this.errorResponseMessage.invalidRequest("Some products are not active or doesn't have enough quantity"), 500, session, error);
                 }
 
                 const salesId= new Types.ObjectId();
@@ -164,9 +164,9 @@ class AppController extends BaseApiController {
 
                 const salesItems = await this.salesItemService.createSalesItems(salesItemDataList, session);
                 const uuid = this.appUtils.generateUUIDV4();
-                const salesInvoice = await this.salesService.createSales(salesItems, body.customer_name, uuid, session);
+                await this.salesService.createSales(salesItems, body.customer_name, uuid, session);
 
-                this.sendSuccessResponse(res, {salesInvoice, salesItems}, session, 201);
+                this.sendSuccessResponse(res, {}, session, 201);
             } catch (error: any) {
                 this.sendErrorResponse(res, error, this.errorResponseMessage.UNABLE_TO_COMPLETE_REQUEST, 500, session);
             }

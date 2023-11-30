@@ -1,8 +1,10 @@
 import { Schema, model} from "mongoose";
 import { MongoId } from "../../interfaces/types";
+import mongoosePagination from "mongoose-paginate-v2";
 
 export const ItemDiscountSchema = {
     discount_id: {type: Schema.Types.ObjectId, ref: "discount", required: true},
+    product_name: {type: String, required: true},
     amount: {type: Number, min: 0, required: true}
 }
 
@@ -41,5 +43,6 @@ export interface ISalesItem {
     _id: MongoId
 }
 
+SalesItemSchema.plugin(mongoosePagination);
 const SalesItem = model<ISalesItem>("sales_item", SalesItemSchema);
 export default SalesItem;
